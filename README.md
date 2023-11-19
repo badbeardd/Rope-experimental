@@ -5,7 +5,7 @@ Fork of [Rope](https://github.com/Hillobar/Rope) - software that implements the 
 
 ### [Donate to Hillobar](https://www.paypal.com/donate/?hosted_button_id=Y5SB9LSXFGRF2)
 
-### [Wiki (how to install and run) (will change later)](https://github.com/Hillobar/Rope/wiki)
+### [Wiki (updated specifically for this repo)](https://github.com/aquawaves/Rope-experimental/wiki)
 
 ### Attention, please ###
 
@@ -13,7 +13,16 @@ I am not the author of original software. All rights belong to developers who ma
 The main point of it is experimenting with original code and getting new results from existing features, also adding something new.
 Main difference: this is the only Linux-compatible fork of Rope, and what do I mean by that is original Rope will work, but you can't change anything in GUI (scroll does not work).
 
-Huge thanks to [Hillobar](https://github.com/Hillobar) for creating Rope and helping out with bugfixes in EX version.
+### Even more attention ###
+
+**This software is made for educational and entertainment purposes.**
+
+**None of authors of Rope, Rope-experimental or any libraries/models/scripts included in this project are responsible for user's results from using Rope or any of it's forks.**
+
+Consider ethical usage while running this software. It was not intended to produce any of possible unethical videos or images and authors do not encourage using it this way. Please ask for a person's consent before you use their face for swapping.
+For usage of Rope-experimental for research purposes without asking a consent, try using AI-generated faces of unexistent people from this website: [This Person Does Not Exist](https://thispersondoesnotexist.com)
+
+**Huge thanks to [Hillobar](https://github.com/Hillobar) for creating Rope and helping out with bugfixes in EX version.**
 
 ### Changelog v191123-e2 "Sapphire EX" ###
 - Imported all the features from latest Rope update: some bugfixes and mask view mode.
@@ -23,3 +32,4 @@ Huge thanks to [Hillobar](https://github.com/Hillobar) for creating Rope and hel
 - Now GUI is fully compatible with Linux-based systems. Models now able to load, scrolling to increase/decrease values now works too.
 - Experimental Occluder opacity feature, feel free to test it out.
 - Other minor changes that are 100% are here, but I don't remember making them.
+
