@@ -10,6 +10,7 @@ from skimage import transform as trans
 from math import floor, ceil
 import copy
 import bisect
+from platform import system
 
 from  rope.Dicts import PARAM_BUTTONS_PARAMS, ACTIONS, PARAM_BUTTONS_CONSTANT
 
@@ -196,6 +197,8 @@ class GUI(tk.Tk):
         # Video [0,0]
         self.video = tk.Label( self.video_frame, self.label_style, bg='black')
         self.video.grid( row = 0, column = 0, sticky='NEWS', pady =0 )
+        self.video.bind("<Button-4>", self.iterate_through_merged_embeddings)
+        self.video.bind("<Button-5>", self.iterate_through_merged_embeddings)
         self.video.bind("<MouseWheel>", self.iterate_through_merged_embeddings)
         
         # Media control canvas
@@ -222,6 +225,8 @@ class GUI(tk.Tk):
         self.video_slider.bind("<ButtonPress-1>", lambda event: self.slider_move('press', self.video_slider.get()))
         self.video_slider.bind("<ButtonRelease-1>", lambda event: self.slider_move('release', self.video_slider.get()))
         self.video_slider.bind("<ButtonRelease-3>", lambda event: self.slider_move('motion', self.video_slider.get()))
+        self.video_slider.bind("<Button-5>", lambda event: self.mouse_wheel(event, self.video_slider.get()))
+        self.video_slider.bind("<Button-4>", lambda event: self.mouse_wheel(event, self.video_slider.get()))
         self.video_slider.bind("<MouseWheel>", lambda event: self.mouse_wheel(event, self.video_slider.get()))
         self.video_slider.pack(fill=tk.X)
 
@@ -316,6 +321,8 @@ class GUI(tk.Tk):
         # Scroll Canvas
         self.found_faces_canvas = tk.Canvas( self.found_faces_frame, self.canvas_style1, height = 100 )
         self.found_faces_canvas.grid( row = 0, column = 1, sticky='NEWS')
+        self.found_faces_canvas.bind("<Button-5>", self.target_faces_mouse_wheel)
+        self.found_faces_canvas.bind("<Button-4>", self.target_faces_mouse_wheel)
         self.found_faces_canvas.bind("<MouseWheel>", self.target_faces_mouse_wheel)
         self.found_faces_canvas.create_text(8, 45, anchor='w', fill='grey25', font=("Arial italic", 50), text=" Target Faces")
         
@@ -347,6 +354,8 @@ class GUI(tk.Tk):
         # Scroll Canvas
         self.source_faces_canvas = tk.Canvas( self.source_faces_frame, self.canvas_style1, height = 100)
         self.source_faces_canvas.grid( row = 0, column = 1, sticky='NEWS')
+        self.source_faces_canvas.bind("<Button-5>", self.source_faces_mouse_wheel)
+        self.source_faces_canvas.bind("<Button-4>", self.source_faces_mouse_wheel)
         self.source_faces_canvas.bind("<MouseWheel>", self.source_faces_mouse_wheel)
         self.source_faces_canvas.create_text(8, 45, anchor='w', fill='grey25', font=("Arial italic", 50), text=' Source Faces')
 
@@ -373,6 +382,8 @@ class GUI(tk.Tk):
         # Video Canvas [0,1]
         self.target_media_canvas = tk.Canvas( self.target_videos_frame, self.canvas_style1, height = 100)
         self.target_media_canvas.grid( row = 0, column = 1, sticky='NEWS')
+        self.target_media_canvas.bind("<Button-5>", self.target_videos_mouse_wheel)
+        self.target_media_canvas.bind("<Button-4>", self.target_videos_mouse_wheel)
         self.target_media_canvas.bind("<MouseWheel>", self.target_videos_mouse_wheel)
         self.target_media_canvas.create_text(8, 45, anchor='w', fill='grey25', font=("Arial italic", 50), text=' Target Videos')
 
@@ -414,15 +425,33 @@ class GUI(tk.Tk):
 
  
     def target_faces_mouse_wheel(self, event):
-        self.found_faces_canvas.xview_scroll(1*int(event.delta/120.0), "units") 
+        if system() == 'Linux':
+            if event.num == 4:
+                self.found_faces_canvas.xview_scroll(10, "units")
+            else:
+                self.found_faces_canvas.xview_scroll(-10, "units")
+        else:
+            self.found_faces_canvas.xview_scroll(1*int(event.delta/120.0), "units") 
    
 
     def source_faces_mouse_wheel(self, event):
-        self.source_faces_canvas.xview_scroll(1*int(event.delta/120.0), "units")
+        if system() == 'Linux':
+            if event.num == 4:
+                self.source_faces_canvas.xview_scroll(10, "units")
+            else:
+                self.source_faces_canvas.xview_scroll(-10, "units")
+        else:
+            self.source_faces_canvas.xview_scroll(1*int(event.delta/120.0), "units")
 
    
     def target_videos_mouse_wheel(self, event):
-        self.target_media_canvas.xview_scroll(1*int(event.delta/120.0), "units")
+        if system() == 'Linux':
+            if event.num == 4:
+                self.target_media_canvas.xview_scroll(10, "units")
+            else:
+                self.target_media_canvas.xview_scroll(-10, "units")
+        else:
+            self.target_media_canvas.xview_scroll(1*int(event.delta/120.0), "units")
 
 
     def initialize_gui( self ):
@@ -516,6 +545,7 @@ class GUI(tk.Tk):
         class empty:
             def __init__(self):
                 self.delta = 0
+                self.num = 0
         event = empty()    
 
         self.update_ui_button('Upscale')
@@ -629,6 +659,8 @@ class GUI(tk.Tk):
                     
                     self.source_faces[j]["TKButton"].bind("<ButtonRelease-1>", lambda event, arg=j: self.toggle_source_faces_buttons_state(event, arg))
                     self.source_faces[j]["TKButton"].bind("<Shift-ButtonRelease-1>", lambda event, arg=j: self.toggle_source_faces_buttons_state_shift(event, arg))
+                    self.source_faces[j]["TKButton"].bind("<Button-5>", self.source_faces_mouse_wheel)
+                    self.source_faces[j]["TKButton"].bind("<Button-4>", self.source_faces_mouse_wheel)
                     self.source_faces[j]["TKButton"].bind("<MouseWheel>", self.source_faces_mouse_wheel)
                     
                     self.source_faces_canvas.create_window((j//4)*92,8+(22*(j%4)), window = self.source_faces[j]["TKButton"],anchor='nw')            
@@ -707,6 +739,8 @@ class GUI(tk.Tk):
                     
                     self.source_faces[shift_i]["TKButton"].bind("<ButtonRelease-1>", lambda event, arg=shift_i: self.toggle_source_faces_buttons_state(event, arg))
                     self.source_faces[shift_i]["TKButton"].bind("<Shift-ButtonRelease-1>", lambda event, arg=shift_i: self.toggle_source_faces_buttons_state_shift(event, arg))
+                    self.source_faces[shift_i]["TKButton"].bind("<Button-5>", self.source_faces_mouse_wheel)
+                    self.source_faces[shift_i]["TKButton"].bind("<Button-4>", self.source_faces_mouse_wheel)
                     self.source_faces[shift_i]["TKButton"].bind("<MouseWheel>", self.source_faces_mouse_wheel)
                     
                     self.source_faces_canvas.create_window(((shift_i_len//4)+i+1)*92,8, window = self.source_faces[shift_i]["TKButton"],anchor='nw')
@@ -790,6 +824,8 @@ class GUI(tk.Tk):
                         last_index = len(self.target_faces)-1
 
                         self.target_faces[last_index]["TKButton"] = tk.Button(self.found_faces_canvas, self.inactive_button_style, height = 86, width = 86)
+                        self.target_faces[last_index]["TKButton"].bind("<Button-4>", self.target_faces_mouse_wheel)
+                        self.target_faces[last_index]["TKButton"].bind("<Button-5>", self.target_faces_mouse_wheel)
                         self.target_faces[last_index]["TKButton"].bind("<MouseWheel>", self.target_faces_mouse_wheel)
                         self.target_faces[last_index]["ButtonState"] = False           
                         self.target_faces[last_index]["Image"] = ImageTk.PhotoImage(image=Image.fromarray(crop))
@@ -983,6 +1019,8 @@ class GUI(tk.Tk):
                 rgb_video = Image.fromarray(images[i][0])        
                 self.target_media.append(ImageTk.PhotoImage(image=rgb_video))            
                 self.target_media_buttons[i].config( image = self.target_media[i],  command=lambda i=i: self.load_target(i, images[i][1], self.actions['ImgVidModes'][self.actions['ImgVidMode']]))
+                self.target_media_buttons[i].bind("<Button-5>", self.target_videos_mouse_wheel)
+                self.target_media_buttons[i].bind("<Button-4>", self.target_videos_mouse_wheel)
                 self.target_media_buttons[i].bind("<MouseWheel>", self.target_videos_mouse_wheel)
                 self.target_media_canvas.create_window(i*92, 8, window = self.target_media_buttons[i], anchor='nw')
 
@@ -995,6 +1033,8 @@ class GUI(tk.Tk):
                 rgb_video = Image.fromarray(videos[i][0])        
                 self.target_media.append(ImageTk.PhotoImage(image=rgb_video))            
                 self.target_media_buttons[i].config( image = self.target_media[i],  command=lambda i=i: self.load_target(i, videos[i][1], self.actions['ImgVidModes'][self.actions['ImgVidMode']]))
+                self.target_media_buttons[i].bind("<Button-5>", self.target_videos_mouse_wheel)
+                self.target_media_buttons[i].bind("<Button-4>", self.target_videos_mouse_wheel)
                 self.target_media_buttons[i].bind("<MouseWheel>", self.target_videos_mouse_wheel)
                 self.target_media_canvas.create_window(i*92, 8, window = self.target_media_buttons[i], anchor='nw')
 
@@ -1251,11 +1291,17 @@ class GUI(tk.Tk):
         self.status_label.configure(text=str(msg))
         self.status_label.pack()
         
-    def mouse_wheel(self, event, frame):    
-        if event.delta > 0: 
-            frame += 1
+    def mouse_wheel(self, event, frame):
+        if system() == 'Linux':
+            if event.num == 4:
+                frame += 1
+            else:
+                frame -= 1
         else:
-            frame -= 1
+            if event.delta > 0: 
+                frame += 1
+            else:
+                frame -= 1
 
         self.video_slider.set(frame)
         self.add_action("get_requested_video_frame", frame)
@@ -1368,8 +1414,15 @@ class GUI(tk.Tk):
         
     
     def parameter_amount(self, event, parameter, parameter_amount, increment, maximum, minimum=0, unit='%' ):
-        if parameter_amount != '':        
-            self.parameters[parameter_amount] += increment*int(event.delta/120.0)
+        if parameter_amount != '':
+            if system() == 'Linux':
+                if event.num == 4:
+                    self.parameters[parameter_amount] += increment
+                else:
+                    self.parameters[parameter_amount] -= increment
+            else:
+                self.parameters[parameter_amount] += increment*int(event.delta/120.0)
+            
             if self.parameters[parameter_amount] > maximum:
                 self.parameters[parameter_amount] = maximum
             if self.parameters[parameter_amount] < minimum :
@@ -1396,8 +1449,14 @@ class GUI(tk.Tk):
         self.parameters_buttons[parameter].config(text=temp)        
           
 
-    def change_video_quality(self, event): 
-        self.video_quality += (1*int(event.delta/120.0))
+    def change_video_quality(self, event):
+        if system() == 'Linux':
+            if event.num == 4:
+                self.video_quality +- 1
+            else:
+                self.video_quality -= 1
+        else:
+            self.video_quality += (1*int(event.delta/120.0))
         
         if self.video_quality > 50:
             self.video_quality = 50
@@ -1412,8 +1471,14 @@ class GUI(tk.Tk):
  
         self.add_action("vid_qual",int(self.video_quality))
 
-    def change_threads_amount(self, event): 
-        self.num_threads += (1*int(event.delta/120.0))
+    def change_threads_amount(self, event):
+        if system() == 'Linux':
+            if event.num == 4:
+                self.num_threads += 1
+            else:
+                self.num_threads -= 1
+        else:
+            self.num_threads += (1*int(event.delta/120.0))
         
         if self.num_threads > 10:
             self.num_threads = 10
@@ -1576,6 +1641,8 @@ class GUI(tk.Tk):
         self.param_const[button].bind("<ButtonRelease-3>", lambda event:self.cycle_ui_button_modes(parameter))
         
         # Mousewheel function - adjust parameter
+        self.param_const[button].bind("<Button-4>", lambda event: self.update_parameter_data(event, parameter))
+        self.param_const[button].bind("<Button-5>", lambda event: self.update_parameter_data(event, parameter))
         self.param_const[button].bind("<MouseWheel>", lambda event: self.update_parameter_data(event, parameter))
         
         # Status Text
@@ -1604,8 +1671,14 @@ class GUI(tk.Tk):
         minimum = self.parameters[parameter+'Min']
         maximum = self.parameters[parameter+'Max']
         increment = self.parameters[parameter+'Inc']
-  
-        self.parameters[amount][index] += increment*int(event.delta/120.0)
+
+        if system() == 'Linux':
+            if event.num == 4:
+                self.parameters[amount][index] += increment
+            else:
+                self.parameters[amount][index] -= increment
+        else:
+            self.parameters[amount][index] += increment*int(event.delta/120.0)
         if self.parameters[amount][index] > maximum:
             self.parameters[amount][index] = maximum
         if self.parameters[amount][index] < minimum:
@@ -1718,9 +1791,13 @@ class GUI(tk.Tk):
             self.actions[button] = tk.Button(root, self.inactive_button_style, compound='left', image=self.actions[icon_holder], anchor='w', command=lambda: self.select_save_video_path())
         elif parameter == 'Threads':
             self.actions[button] = tk.Button(root, self.inactive_button_style, compound='left', image=self.actions[icon_holder], anchor='w')
+            self.actions[button].bind("<Button-5>", self.change_threads_amount)  
+            self.actions[button].bind("<Button-4>", self.change_threads_amount)  
             self.actions[button].bind("<MouseWheel>", self.change_threads_amount)  
         elif parameter == 'VideoQuality':
             self.actions[button] = tk.Button(root, self.inactive_button_style, compound='left', image=self.actions[icon_holder], anchor='w')
+            self.actions[button].bind("<Button-5>", self.change_video_quality) 
+            self.actions[button].bind("<Button-4>", self.change_video_quality) 
             self.actions[button].bind("<MouseWheel>", self.change_video_quality) 
             
         temp = ' '+mode

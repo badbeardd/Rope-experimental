@@ -675,7 +675,7 @@ class VideoManager():
 
         # Occluder
         if parameters["OccluderState"]:
-            occlude_mask = self.apply_occlusion(original_face_256)
+            occlude_mask = self.apply_occlusion(original_face_256, parameters["OccluderAmount"][0])
             occlude_mask = cv2.resize(occlude_mask, (128,128))  
             img_mask *= occlude_mask 
 
@@ -755,8 +755,11 @@ class VideoManager():
         
         return img.astype(np.uint8)   #BGR
         
-    # @profile    
-    def apply_occlusion(self, img):        
+    # @profile
+
+    def apply_occlusion(self, img, OccluderAmount):
+        multiplier = OccluderAmount/100.0
+
         img = (img /255.0)
 
         img = np.float32(img[np.newaxis,:,:,:])
@@ -775,14 +778,13 @@ class VideoManager():
             occlude_mask = self.occluder_model.run(None, inputs)[0][0]     
 
         occlude_mask = (occlude_mask > 0)
-        occlude_mask = occlude_mask.transpose(1, 2, 0).astype(np.float32)
 
+        occlude_mask = occlude_mask.transpose(1, 2, 0).astype(np.float32) * multiplier
         
         # occlude_mask = occlude_mask.squeeze().numpy()*1.0
 
-        return occlude_mask         
-    
-      
+        return occlude_mask
+
     def apply_neg_CLIPs(self, img, CLIPText, CLIPAmount):
         clip_mask = np.ones((352, 352))
         
@@ -831,10 +833,10 @@ class VideoManager():
             out = out.squeeze(0).argmax(0)
             
             if FaceParserAmount == -1:
-                out = np.isin(out, [11]).astype('float32')
+                out = np.isin(out, [11, 12, 13]).astype('float32')
                 out = -1.0*(out-1.0)
             else:
-                out = np.isin(out, [11,12,13]).astype('float32')
+                out = np.isin(out, [11, 13]).astype('float32')
                 out = -1.0*(out-1.0)
                 size = int(FaceParserAmount-1)
                 kernel = np.ones((size, size))
@@ -863,7 +865,7 @@ class VideoManager():
                 out = self.face_parsing_model.run(None, {'input':img})[0]
 
             out = out.squeeze(0).argmax(0)
-            out = np.isin(out, [0, 16, 17, 18]).astype('float32')
+            out = np.isin(out, [16, 17, 18]).astype('float32') # changed
             out = -1.0*(out-1.0)
             
             size = int(FaceParserAmount-1)
