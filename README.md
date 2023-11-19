@@ -13,7 +13,7 @@ I am not the author of original software. All rights belong to developers who ma
 The main point of it is experimenting with original code and getting new results from existing features, also adding something new.
 Main difference: this is the only Linux-compatible fork of Rope, and what do I mean by that is original Rope will work, but you can't change anything in GUI (scroll does not work).
 
-All the text below is borrowed from original repo and 100% applicable to this fork too.
+99% of the text below is borrowed from original repo and 100% applicable to this fork too.
 
 ### Features: ###
 * Incredible features and fast workflow
@@ -29,6 +29,12 @@ All the text below is borrowed from original repo and 100% applicable to this fo
 - Orientation. Sometimes faces are at a bad orientation, like laying down or upside-down. The face detector has problems with this, so Rope now has an option to tell the detector which way the face is oriented. It is also markerable, so you can set markers for it per frame!
 - Tool tips on (almost) everything. Tips are in the bottom pane.
 - Bug fixes and refactoring
+
+### (2023-11-19) Changelog for Rope-experimental: v191123: ###
+- Linux-based systems are now supported.
+- Added occluder strength, setting it lower than 100 can give you some interesting results, it works like face parcer + diffusion + blur at the same time.
+- Now face parser options are swapped - setting in above 1 will remove only mouth and lower lip, -1 removes mouth and both lips.
+- Changed increments on most parameters, now you can set as low as 1% of strength and 15 degrees of orientation.
 
 ### (2023-11-18) Bug Fixes for Sapphire - Shard: ###
 - (fixed) saving the same image multiple times in a row overwrites it. the time is appended when the image is loaded, not saved, so the time is always the same
