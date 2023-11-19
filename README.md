@@ -1,11 +1,19 @@
 ![image](https://github.com/Hillobar/Rope/assets/63615199/3003777e-1477-4c39-9749-cf2314287cad)
 
-Rope implements the insightface inswapper_128 model with a helpful GUI.
+Fork of [Rope](https://github.com/Hillobar/Rope) - software that implements the insightface inswapper_128 model with a helpful GUI.
 ### [Discord](https://discord.gg/EcdVAFJzqp)
 
 ### [Donate](https://www.paypal.com/donate/?hosted_button_id=Y5SB9LSXFGRF2)
 
 ### [Wiki](https://github.com/Hillobar/Rope/wiki)
+
+### Attention, please ###
+
+I am not the author of original software. All rights belong to developers who made all the libraries and scripts required for this software to run.
+The main point of it is experimenting with original code and getting new results from existing features, also adding something new.
+Main difference: this is the only Linux-compatible fork of Rope, and what do I mean by that is original Rope will work, but you can't change anything in GUI (scroll does not work).
+
+All the text below is borrowed from original repo and 100% applicable to this fork too.
 
 ### Features: ###
 * Incredible features and fast workflow
