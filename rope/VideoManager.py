@@ -676,7 +676,7 @@ class VideoManager():
 
         # Occluder
         if parameters["OccluderState"]:
-            omask = self.apply_occlusion(original_face_256, parameters['OccluderAmount'][0])
+            mask = self.apply_occlusion(original_face_256, parameters['OccluderAmount'][0])
             mask = cv2.resize(mask, (128,128))  
             img_mask *= mask  
 
