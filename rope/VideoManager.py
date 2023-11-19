@@ -708,7 +708,7 @@ class VideoManager():
         img_mask = np.reshape(img_mask, [img_mask.shape[0],img_mask.shape[1],1]) 
         swapped_face_upscaled *= img_mask
 
-         if not parameters['MaskViewState']:
+        if not parameters['MaskViewState']:
 
             swapped_face_upscaled = cv2.warpAffine(swapped_face_upscaled, IM512, (img.shape[1], img.shape[0]), borderValue=0.0) 
 
