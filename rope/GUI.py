@@ -48,17 +48,6 @@ class GUI(tk.Tk):
 
 
         self.parameters_buttons={}
-                 
-        self.icons =   {
-                            "GFPGAN":                   [],
-                            "Diff":                     [],
-                            "Threshold":                [],
-                            "MaskTop":                  [],
-                            "MaskBlur":                 [],
-                            "Occluder":                 [],
-                            "CLIP":                     [],
-                            'FindFaces':                [],
-                            }
         
         self.button_data =  {
                             'FindFaces':                ['./rope/media/tarface.png', '', ''],
@@ -276,7 +265,7 @@ class GUI(tk.Tk):
 
         column2=column1+125+x_space
         self.create_ui_button('Mask', self.label_frame1, column2, 8)
-        self.create_ui_button('MaskBlur', self.label_frame1, column2, 37)
+        self.create_ui_button('MaskView', self.label_frame1, column2, 37)
 
         column3=column2+125+x_space
         self.create_ui_button('CLIP', self.label_frame1, column3, 8)
@@ -551,7 +540,7 @@ class GUI(tk.Tk):
         self.update_ui_button('Upscale')
         self.update_ui_button('Diff')
         self.update_ui_button('Mask')
-        self.update_ui_button('MaskBlur')
+        self.update_ui_button('MaskView')
         self.update_ui_button('CLIP')
         self.update_ui_button('Occluder')
         self.update_ui_button('FaceParser')
@@ -1827,7 +1816,7 @@ class GUI(tk.Tk):
             self.update_ui_button('Upscale')
             self.update_ui_button('Diff')
             self.update_ui_button('Mask')
-            self.update_ui_button('MaskBlur')
+            self.update_ui_button('MaskView')
             self.update_ui_button('CLIP')
             self.update_ui_button('Occluder')
             self.update_ui_button('FaceParser')
