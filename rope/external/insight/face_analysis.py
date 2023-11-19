@@ -19,6 +19,8 @@ from .retinaface import RetinaFace
 from .arcface_onnx import ArcFaceONNX
 from .common import Face
 
+from platform import system
+
 __all__ = ['FaceAnalysis']
 
 class FaceAnalysis:
@@ -26,11 +28,18 @@ class FaceAnalysis:
         onnxruntime.set_default_logger_severity(4)
         self.models = {}
 
-        session = onnxruntime.InferenceSession('.\models\det_10g.onnx', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
-        self.models['detection'] = RetinaFace('.\models\det_10g.onnx', session=session)
+        if system() == 'Linux':
+                session = onnxruntime.InferenceSession('./models/det_10g.onnx', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+                self.models['detection'] = RetinaFace('./models/det_10g.onnx', session=session)
 
-        session = onnxruntime.InferenceSession('.\models\w600k_r50.onnx', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
-        self.models['recognition'] = ArcFaceONNX('.\models\w600k_r50.onnx', session=session)       
+                session = onnxruntime.InferenceSession('./models/w600k_r50.onnx', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+                self.models['recognition'] = ArcFaceONNX('./models/w600k_r50.onnx', session=session)  
+        else:
+                session = onnxruntime.InferenceSession('.\models\det_10g.onnx', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+                self.models['detection'] = RetinaFace('.\models\det_10g.onnx', session=session)
+
+                session = onnxruntime.InferenceSession('.\models\w600k_r50.onnx', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+                self.models['recognition'] = ArcFaceONNX('.\models\w600k_r50.onnx', session=session)       
 
         assert 'detection' in self.models
         self.det_model = self.models['detection']
