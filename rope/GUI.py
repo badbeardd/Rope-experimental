@@ -1469,7 +1469,7 @@ class GUI(tk.Tk):
     def change_video_quality(self, event):
         if system() == 'Linux':
             if event.num == 4:
-                self.video_quality +- 1
+                self.video_quality += 1
             else:
                 self.video_quality -= 1
         else:
@@ -1830,7 +1830,7 @@ class GUI(tk.Tk):
             self.actions[button] = tk.Button(root, self.inactive_button_style, compound='left', image=self.actions[icon_holder], anchor='w')
             self.actions[button].bind("<Button-5>", self.change_threads_amount)  
             self.actions[button].bind("<Button-4>", self.change_threads_amount)  
-            self.actions[button].bind("<MouseWheel>", self.change_threads_amount)  
+            self.actions[button].bind("<MouseWheel>", self.change_threads_amount)
         elif parameter == 'VideoQuality':
             self.actions[button] = tk.Button(root, self.inactive_button_style, compound='left', image=self.actions[icon_holder], anchor='w')
             self.actions[button].bind("<Button-5>", self.change_video_quality) 
