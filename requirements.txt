@@ -16,3 +16,4 @@ tqdm
 ftfy
 regex
 
+python3-tk
