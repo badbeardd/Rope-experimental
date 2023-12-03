@@ -11,12 +11,16 @@ import onnx
 import torch
 from torchvision import transforms
 
+import rope.globals
+
 from rope.external.clipseg import CLIPDensePredT
 from rope.external.insight.face_analysis import FaceAnalysis
 
+resize_delay = 1
+
 # @profile
 def coordinator():
-    global gui, vm, action, frame, r_frame, load_notice
+    global gui, vm, action, frame, r_frame, load_notice, resize_delay
     start = time.time()
     
     # print(start)
@@ -70,6 +74,7 @@ def coordinator():
             if not vm.swapper_model:
                 swapper, emap = load_swapper_model()
                 vm.set_swapper_model(swapper, emap)
+                print("inswapper_128 model has been found and successfully loaded")
             vm.swap = action[0][1]
             action.pop(0)
         elif action[0][0] == "source_embeddings":  
@@ -96,27 +101,37 @@ def coordinator():
         elif action [0][0] == "set_stop":
             vm.stop_marker = action[0][1]
             action.pop(0) 
-        elif action [0][0] == "load_null":
-            vm.load_null()
-            action.pop(0) 
+        elif action [0][0] == "set_stop":
+            vm.stop_marker = action[0][1]
+            action.pop(0)  
+        elif action [0][0] == "perf_test":
+            vm.perf_test = action[0][1]
+            action.pop(0)
         elif action [0][0] == "parameters":
             if action[0][1]['UpscaleState']:
+                if not vm.resnet_model:
+                    vm.resnet_model = load_resnet_model()
                 index = action[0][1]['UpscaleMode']
                 if action[0][1]['UpscaleModes'][index] == 'GFPGAN':
                     if not vm.GFPGAN_model:
                         vm.GFPGAN_model = load_GFPGAN_model()
+                        print("GFPGAN model has been found and successfully loaded")
                 elif action[0][1]['UpscaleModes'][index] == 'CF':
                     if not vm.codeformer_model:
                         vm.codeformer_model = load_codeformer_model()
+                        print("CodeFormer model has been found and successfully loaded")
             if action[0][1]["CLIPState"]:
                 if not vm.clip_session:
                     vm.clip_session = load_clip_model()
+                    print("CLIP model has been found and successfully loaded")
             if action[0][1]["OccluderState"]:
                 if not vm.occluder_model:
                     vm.occluder_model = load_occluder_model()
+                    print("Occluder model has been found and successfully loaded")
             if action[0][1]["FaceParserState"]:
                 if not vm.face_parsing_model:
                     vm.face_parsing_model, vm.face_parsing_tensor = load_face_parser_model()
+                    print("Face parser model has been found and successfully loaded")
             vm.parameters = action[0][1]
             action.pop(0) 
         elif action [0][0] == "markers":
@@ -126,7 +141,8 @@ def coordinator():
             if not gui.faceapp_model or not vm.faceapp_model:
                 faceapp_model = load_faceapp_model() 
                 gui.faceapp_model = faceapp_model
-                vm.faceapp_model = faceapp_model  
+                vm.faceapp_model = faceapp_model
+                print("Buffalo model has been found and successfully loaded")  
             action.pop(0)
             
         elif action [0][0] == "load_models":
@@ -155,14 +171,83 @@ def coordinator():
       # start = time.time()
   
 
-    gui.check_for_video_resize()
+    if resize_delay > 5:
+        gui.check_for_video_resize()
+        resize_delay = 0
+    else:
+        resize_delay +=1
+    
     vm.process()
     gui.after(1, coordinator)
     # print(time.time() - start)    
+
+def load_cli():
+    print("Todo - starts on line 171 coordinator.py")
+    print("CLI mode will load models but processing won't start. Sorry! Still not implemented")
+
+    global vm, action, frame, r_frame
+    vm = VM.VideoManager()
+
+    action = []
+    frame = []
+    r_frame = []
     
+    if not vm.faceapp_model:
+        faceapp_model = load_faceapp_model()
+        vm.faceapp_model = faceapp_model
+    
+    if not vm.swapper_model:
+        swapper, emap = load_swapper_model()
+        vm.set_swapper_model(swapper, emap)
+
+    if not vm.GFPGAN_model and rope.globals.gfpgan_enabled:
+        gfpgan_model = load_GFPGAN_model()
+        vm.GFPGAN_model = gfpgan_model
+
+    if not vm.codeformer_model and rope.globals.codeformer_enabled:
+        codeformer_model = load_codeformer_model()
+        vm.codeformer_model = codeformer_model
+
+    if not vm.clip_session and rope.globals.clip_enabled:
+        clip_session = load_clip_model()
+        vm.clip_session = clip_session
+
+    if not vm.occluder_model and rope.globals.occluder_enabled:
+        occluder_model = load_occluder_model()
+        vm.occluder_model = occluder_model
+
+    if not vm.face_parsing_model and rope.globals.faceparser_enabled:
+        vm.face_parsing_model, vm.face_parsing_tensor = load_face_parser_model()
+
+    file = rope.globals.source_video_path
+
+    vm.load_target_video( file )
+
+    file = rope.globals.target_face_path
+
+    vm.load_target_image( file )
+
+    if vm.get_action_length() > 0:
+        action.append(vm.get_action())
+
+    if vm.get_frame_length() > 0:
+        frame.append(vm.get_frame())
+
+    if vm.get_requested_frame_length() > 0:
+        r_frame.append(vm.get_requested_frame())
+
+    if len(r_frame) > 0:
+        r_frame=[]
+
+    
+
+
+
+
 def load_faceapp_model():
     app = FaceAnalysis(name='buffalo_l')
-    app.prepare(ctx_id=0, det_thresh=0.5, det_size=(512, 512))
+    app.prepare(ctx_id=0, det_thresh=0.5, det_size=(640, 640))
+    print("Locating and loading buffalo model...")
     return app
 
 def load_swapper_model():    
@@ -173,6 +258,7 @@ def load_swapper_model():
 
     sess_options = onnxruntime.SessionOptions()
     sess_options.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL
+    print("Locating and loading inswapper_128 model...")
     
     return onnxruntime.InferenceSession( "./models/inswapper_128.fp16.onnx", sess_options, providers = ['CUDAExecutionProvider']), emap
     
@@ -184,19 +270,23 @@ def load_clip_model():
     # clip_session = CLIPDensePredTMasked(version='ViT-B/16', reduce_dim=64)
     clip_session.eval();
     clip_session.load_state_dict(torch.load('./models/rd64-uni-refined.pth'), strict=False) 
-    clip_session.to(device)    
+    clip_session.to(device)
+    print("Locating and loading CLIP model...")    
     return clip_session 
 
 def load_GFPGAN_model():
     GFPGAN_session = onnxruntime.InferenceSession( "./models/GFPGANv1.4.onnx", providers=["CUDAExecutionProvider"])
+    print("Locating and loading GFPGAN model...")  
     return GFPGAN_session
     
 def load_codeformer_model():    
     codeformer_session = onnxruntime.InferenceSession( "./models/codeformer_fp16.onnx", providers=["CUDAExecutionProvider"])
+    print("Locating and loading CodeFormer model...")  
     return codeformer_session
 
 def load_occluder_model():            
     model = onnxruntime.InferenceSession("./models/occluder.onnx", providers=["CUDAExecutionProvider"])
+    print("Locating and loading occluder model...")  
     return model 
 
 def load_face_parser_model():    
@@ -206,21 +296,26 @@ def load_face_parser_model():
         transforms.ToTensor(),
         transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
-    
-    return session, to_tensor 
+    print("Locating and loading face parser model...")  
+    return session, to_tensor
+
+
+def load_resnet_model():     
+    model = onnxruntime.InferenceSession("./models/res50.onnx", providers=["CUDAExecutionProvider"])
+    return model
 
 def run():
-    global gui, vm, action, frame, r_frame
+    global gui, vm, action, frame, r_frame, resize_delay
     gui = GUI.GUI()
     vm = VM.VideoManager()
 
     action = []
     frame = []
     r_frame = []
-
+    print("Initializing GUI, please wait..")
     gui.initialize_gui() 
     coordinator()    
-    
+    print("GUI initialized successfully")
     gui.mainloop()
 
 

@@ -21,16 +21,16 @@ PARAM_BUTTONS_PARAMS =    {
     'DiffIcon':                 './rope/media/diff.png',
     'DiffMessage':              'DIFFERENCER - Blends between Target Face and Swapped Face based on pixel difference. [LB: on/off, MW: difference threshold]',
     
-    'MaskState':                False,
-    'MaskMode':                 0, 
-    'MaskModes':                ['Mask Top', 'Mask Sides', 'Mask Bottom', 'Mask Blur'],  
-    'MaskAmount':               [10, 10, 5, 5],
-    'MaskMin':                  0,
-    'MaskMax':                  64,
-    'MaskInc':                  1,                                                 
-    'MaskUnit':                 '%', 
-    'MaskIcon':                 './rope/media/maskup.png',
-    'MaskMessage':              'MASK - Initial mask. A rectangle with adjustable top and sides that blends the Swapped Face into the original background. [RB: top/sides/bottom/blur, MW: amount]',   
+    'BorderState':              False,
+    'BorderMode':               0, 
+    'BorderModes':              ['Brdr Top', 'Brdr Sides', 'Brdr Bttm', 'Brdr Blur'],  
+    'BorderAmount':             [10, 10, 10, 10],
+    'BorderMin':                0,
+    'BorderMax':                64,
+    'BorderInc':                1,                                                 
+    'BorderUnit':               '%', 
+    'BorderIcon':               './rope/media/maskup.png',
+    'BorderMessage':            'BORDER - A rectangle with adjustable top, bottom, and sides that blends the Swapped Face. [RB: top/sides/bottom/blur, MW: amount]',
 
     'MaskViewState':            False,
     'MaskViewMode':             0, 
@@ -115,10 +115,21 @@ PARAM_BUTTONS_PARAMS =    {
     'OrientationAmount':        [0],
     'OrientationMin':           0,
     'OrientationMax':           270,
-    'OrientationInc':           15,                                                 
+    'OrientationInc':           90,                                                 
     'OrientationUnit':          '%', 
     'OrientationIcon':          './rope/media/orient.png',
-    'OrientationMessage':       'ORIENTATION - Rotate the face detector to better detect faces at different angles. [MW: angle]',                               
+    'OrientationMessage':       'ORIENTATION - Rotate the face detector to better detect faces at different angles. [MW: angle]',          
+
+    'EnhancerRefState':         False,
+    'EnhancerRefMode':          0, 
+    'EnhancerRefModes':         ['Adjust'],  
+    'EnhancerRefAmount':        [0.0, 0.0, 0.0, 0.0],
+    'EnhancerRefMin':           0,
+    'EnhancerRefMax':           100,
+    'EnhancerRefInc':           10,                                                 
+    'EnhancerRefUnit':          '%', 
+    'EnhancerRefIcon':          './rope/media/orient.png',
+    'EnhancerRefMessage':       'ORIENTATION - Rotate the face detector to better detect faces at different angles. [MW: angle]',                         
     
     "CLIPText":                 '',
 
@@ -142,7 +153,7 @@ ACTIONS =   {
     'ImgDockMode':                 0, 
     'ImgDockModes':                [''],                         
     'ImgDockIcon':                 './rope/media/dock.png',
-    'ImgDockMessage':              'UNDOCK WINDOW - Undocks the wimdow area. Cannot be re-docked.', 
+    'ImgDockMessage':              'UNDOCK WINDOW - Undocks the window area. Cannot be re-docked.', 
     'ImgDockButton':               [],
     'ImgDockIconHolder':           [],
     
@@ -200,8 +211,15 @@ ACTIONS =   {
     'NextMarkerIcon':           './rope/media/next.png',
     'NextMarkerMessage':        'NEXT MARKER - Move to the next marker.', 
     'NextMarkerButton':         [],
-    'NextMarkerIconHolder':     [],
+    'NextMarkerIconHolder':     [],  
 
+    'ToggleStopState':          False,
+    'ToggleStopMode':           0, 
+    'ToggleStopModes':          [''],                         
+    'ToggleStopIcon':           './rope/media/STOP.png',
+    'ToggleStopMessage':        'STOP MARKER - Sets a frame that will stop the video playing/recording.', 
+    'ToggleStopButton':         [],
+    'ToggleStopIconHolder':     [],                  
 
     'ToggleStopState':          False,
     'ToggleStopMode':           0, 
@@ -263,7 +281,15 @@ ACTIONS =   {
     'ImgVidMessage':         'IMAGE/VIDEO - Toggle between Image and Video folder view.', 
     'ImgVidButton':          [],
     'ImgVidIconHolder':      [],    
-    
+
+    'HoldFaceState':           False,
+    'HoldFaceMode':            0, 
+    'HoldFaceModes':           ['HoldFace'],                         
+    'HoldFaceIcon':            './rope/media/imgvid.png',
+    'HoldFaceMessage':         'IMAGE/VIDEO - Toggle between Image and Video folder view.', 
+    'HoldFaceButton':          [],
+    'HoldFaceIconHolder':      [],     
+
     'StartRopeState':           False,
     'StartRopeMode':            0, 
     'StartRopeModes':           ['Start Rope'],                         
@@ -296,6 +322,14 @@ ACTIONS =   {
     'VideoQualityButton':          [],
     'VideoQualityIconHolder':      [],  
 
+    'PerfTestState':           False,
+    'PerfTestMode':            0, 
+    'PerfTestModes':           ['Perf Test'],                         
+    'PerfTestIcon':            './rope/media/test.png',
+    'PerfTestMessage':         '()', 
+    'PerfTestButton':          [],
+    'PerfTestIconHolder':      [], 
+
     # 'State':           False,
     # 'Mode':            0, 
     # 'Modes':           ['Videos', 'Images'],                         
@@ -305,4 +339,4 @@ ACTIONS =   {
     # 'IconHolder':      [],      
     
     
-     }   
+     }
