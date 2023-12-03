@@ -25,6 +25,9 @@ For usage of Rope-experimental for research purposes without asking a consent, t
 **Huge thanks to [Hillobar](https://github.com/Hillobar) for creating Rope and helping out with bugfixes in EX version.**
 
 ### Changelog ###
+### Rope EX v24 ###
+- Added everything to match new features and bugfixes from latest Rope release. PLEASE NOTICE! Now it requires '-gui' key to start an application.
+
 ### v191123-e3 "Sapphire EX"
 - All the bug fixes and features from original Rope's latest update are now there too (added a stop marker, CLIP fixed, better work of enhancers).
 
