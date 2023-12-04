@@ -49,5 +49,4 @@ For usage of Rope-experimental for research purposes without asking a consent, t
 ### To do in future versions (no guarantee it will be done): ###
 - Adding new enhancer models like GPEN or Real-ESRGAN
 - Adding new occluder models
-- Adding blur for only mask edges
 - Unloading models from VRAM for low-end GPU users
