@@ -24,6 +24,9 @@ For usage of Rope-experimental for research purposes without asking a consent, t
 
 **Huge thanks to [Hillobar](https://github.com/Hillobar) for creating Rope and helping out with bugfixes in EX version.**
 
+**Some updates may come without a notice - it might be a little bugfix or non-crucial change in code et cetera. 
+Also some of the features that are currently in progress may appear in updates but won't work. I'll try to notify if there is one in a patch note.**
+
 ### Changelog ###
 ### Rope EX v24 ###
 - Added everything to match new features and bugfixes from latest Rope release. PLEASE NOTICE! Now it requires '-gui' key to start an application.
