@@ -362,9 +362,9 @@ class VideoManager():
                     "-r",           str(self.fps),
                     "-i",           "pipe:",
                     # '-g',           '25',
-                    "-vf",          "format=yuvj420p",
+                    "-vf",          "format=yuv420p",
                     "-c:v",         "libx264",
-                    "-crf",         str(self.vid_qual),
+                    "-cq",         str(self.vid_qual),
                     "-r",           str(self.fps),
                     "-s",           str(frame_width)+"x"+str(frame_height),
                     self.temp_file]  
@@ -429,7 +429,7 @@ class VideoManager():
                     image = self.process_qs[index]['ProcessedFrame']  
 
                     pil_image = Image.fromarray(image)
-                    pil_image.save(self.sp.stdin, 'JPEG')   
+                    pil_image.save(self.sp.stdin, 'BMP')   
 
                     temp = [image, self.process_qs[index]['FrameNumber']]
                     self.frame_q.append(temp)
