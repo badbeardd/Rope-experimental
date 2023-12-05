@@ -102,7 +102,7 @@ PARAM_BUTTONS_PARAMS =    {
     'StrengthMode':             0, 
     'StrengthModes':            ['Strength'],  
     'StrengthAmount':           [100],
-    'StrengthMin':              0,
+    'StrengthMin':              70,
     'StrengthMax':              500,
     'StrengthInc':              10,                                                 
     'StrengthUnit':             '%', 
