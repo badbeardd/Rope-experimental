@@ -13,6 +13,8 @@ I am not the author of original software. All rights belong to developers who ma
 The main point of it is experimenting with original code and getting new results from existing features, also adding something new.
 Main difference: this is the only Linux-compatible fork of Rope, and what do I mean by that is original Rope will work, but you can't change anything in GUI (scroll does not work).
 
+If you want to contribute, please make pull requests to dev branch. Thank you!
+
 ### Even more attention ###
 
 **This software is made for educational and entertainment purposes.**
