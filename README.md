@@ -30,18 +30,18 @@ For usage of Rope-experimental for research purposes without asking a consent, t
 Also some of the features that are currently in progress may appear in updates but won't work. I'll try to notify if there is one in a patch note.**
 
 ### Changelog ###
-### Rope EX v24 ###
+### EX v24 ###
 - Added everything to match new features and bugfixes from latest Rope release. PLEASE NOTICE! Now it requires '-gui' key to start an application.
 - Little bit more useful output into console.
 
-### v191123-e3 "Sapphire EX"
+### EX v23-e3
 - All the bug fixes and features from original Rope's latest update are now there too (added a stop marker, CLIP fixed, better work of enhancers).
 
-### v191123-e2 "Sapphire EX"
+### EX v23-e2
 - Imported all the features from latest Rope update: some bugfixes and mask view mode.
 - Now MouthParser supports values as low as -50 for whole mouth and as high as 50 for mouth & lower lip only. (Works in different direction compared to original Rope)
 
-### v191123 "Sapphire EX"
+### EX v23
 - Now GUI is fully compatible with Linux-based systems. Models now able to load, scrolling to increase/decrease values now works too.
 - Experimental Occluder opacity feature, feel free to test it out.
 - Other minor changes that are 100% are here, but I don't remember making them.
