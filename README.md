@@ -1,5 +1,3 @@
-![image](https://github.com/Hillobar/Rope/assets/63615199/3003777e-1477-4c39-9749-cf2314287cad)
-
 Fork of [Rope](https://github.com/Hillobar/Rope) - software that implements the insightface inswapper_128 model with a helpful GUI.
 ### [Original author's Discord](https://discord.gg/EcdVAFJzqp)
 
@@ -30,6 +28,10 @@ For usage of Rope-experimental for research purposes without asking a consent, t
 Also some of the features that are currently in progress may appear in updates but won't work. I'll try to notify if there is one in a patch note.**
 
 ### Changelog ###
+
+### EX v24.1 ###
+- Matching all changes from original Rope - a great speed boost comparing to Rope-Crystal and many more little details.
+
 ### EX v24 ###
 - Added everything to match new features and bugfixes from latest Rope release. PLEASE NOTICE! Now it requires '-gui' key to start an application.
 - Little bit more useful output into console.
