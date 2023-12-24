@@ -28,7 +28,6 @@ import rope.globals
 import rope.Coordinator as Coordinator
 
 from rope.external.clipseg import CLIPDensePredT
-from rope.external.insight.face_analysis import FaceAnalysis
 import rope.VideoManager as VM
 
 def parse_console_input() -> None:

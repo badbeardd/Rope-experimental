@@ -11,46 +11,51 @@ import onnx
 import torch
 from torchvision import transforms
 
+from torchvision.transforms.functional import normalize  # update to v2
+# from torchvision.transforms import v2
+
 import rope.globals
 
 from rope.external.clipseg import CLIPDensePredT
-from rope.external.insight.face_analysis import FaceAnalysis
+
+onnxruntime.set_default_logger_severity(4)
 
 resize_delay = 1
+
 
 # @profile
 def coordinator():
     global gui, vm, action, frame, r_frame, load_notice, resize_delay
     start = time.time()
-    
+
     # print(start)
-    
+
     if gui.get_action_length() > 0:
         action.append(gui.get_action())
     if vm.get_action_length() > 0:
         action.append(vm.get_action())
-##################    
+    ##################
     if vm.get_frame_length() > 0:
         frame.append(vm.get_frame())
-        
+
     if len(frame) > 0:
         gui.set_image(frame[0], False)
         frame.pop(0)
- ####################   
+    ####################
     if vm.get_requested_frame_length() > 0:
-        r_frame.append(vm.get_requested_frame())    
+        r_frame.append(vm.get_requested_frame())
     if len(r_frame) > 0:
         # print ("1:", time.time())
         gui.set_image(r_frame[0], True)
-        r_frame=[]
- ####################   
+        r_frame = []
+    ####################
     if len(action) > 0:
         if action[0][0] == "load_target_video":
             vm.load_target_video(action[0][1])
             action.pop(0)
         elif action[0][0] == "load_target_image":
             vm.load_target_image(action[0][1])
-            action.pop(0)            
+            action.pop(0)
         elif action[0][0] == "play_video":
             vm.play_video(action[0][1])
             action.pop(0)
@@ -60,16 +65,16 @@ def coordinator():
             action.pop(0)
         elif action[0][0] == "get_requested_video_frame_parameters":
             vm.get_requested_video_frame_parameters(action[0][1])
-            action.pop(0)    
+            action.pop(0)
         elif action[0][0] == "get_requested_image":
             vm.get_requested_image()
-            action.pop(0)            
+            action.pop(0)
         elif action[0][0] == "find_faces":
             gui.find_faces(action[0][1])
-            action.pop(0)    
+            action.pop(0)
         elif action[0][0] == "clear_faces":
             gui.clear_faces()
-            action.pop(0)    
+            action.pop(0)
         elif action[0][0] == "swap":
             if not vm.swapper_model:
                 swapper, emap = load_swapper_model()
@@ -77,37 +82,28 @@ def coordinator():
                 print("inswapper_128 model has been found and successfully loaded")
             vm.swap = action[0][1]
             action.pop(0)
-        elif action[0][0] == "source_embeddings":  
-            vm.load_source_embeddings(action[0][1])
-            action.pop(0)
         elif action[0][0] == "target_faces":
             vm.target_facess = action[0][1]
             action.pop(0)
-        elif action [0][0] == "num_threads":
+        elif action[0][0] == "num_threads":
             vm.num_threads = action[0][1]
-            action.pop(0)         
-        elif action [0][0] == "pos_thresh":
-            vm.pos_thresh = action[0][1]
-            action.pop(0)              
-        elif action [0][0] == "neg_thresh":
-            vm.neg_thresh = action[0][1]
-            action.pop(0) 
-        elif action [0][0] == "saved_video_path":
+            action.pop(0)
+        elif action[0][0] == "saved_video_path":
             vm.saved_video_path = action[0][1]
-            action.pop(0) 
-        elif action [0][0] == "vid_qual":
+            action.pop(0)
+        elif action[0][0] == "vid_qual":
             vm.vid_qual = int(action[0][1])
             action.pop(0)
-        elif action [0][0] == "set_stop":
+        elif action[0][0] == "set_stop":
             vm.stop_marker = action[0][1]
-            action.pop(0) 
-        elif action [0][0] == "set_stop":
+            action.pop(0)
+        elif action[0][0] == "set_stop":
             vm.stop_marker = action[0][1]
-            action.pop(0)  
-        elif action [0][0] == "perf_test":
+            action.pop(0)
+        elif action[0][0] == "perf_test":
             vm.perf_test = action[0][1]
             action.pop(0)
-        elif action [0][0] == "parameters":
+        elif action[0][0] == "parameters":
             if action[0][1]['UpscaleState']:
                 if not vm.resnet_model:
                     vm.resnet_model = load_resnet_model()
@@ -133,56 +129,59 @@ def coordinator():
                     vm.face_parsing_model, vm.face_parsing_tensor = load_face_parser_model()
                     print("Face parser model has been found and successfully loaded")
             vm.parameters = action[0][1]
-            action.pop(0) 
-        elif action [0][0] == "markers":
-            vm.markers = action[0][1]
-            action.pop(0)            
-        elif action[0][0] == 'load_faceapp_model':
-            if not gui.faceapp_model or not vm.faceapp_model:
-                faceapp_model = load_faceapp_model() 
-                gui.faceapp_model = faceapp_model
-                vm.faceapp_model = faceapp_model
-                print("Buffalo model has been found and successfully loaded")  
             action.pop(0)
-            
-        elif action [0][0] == "load_models":
+        elif action[0][0] == "markers":
+            vm.markers = action[0][1]
+            action.pop(0)
+        elif action[0][0] == 'load_faceapp_model':
+            if not vm.detection_model or not gui.detection_model:
+                detection_model = load_detection_model()
+                vm.detection_model = detection_model
+                gui.detection_model = detection_model
+
+                recognition_model = load_recognition_model()
+                vm.recognition_model = recognition_model
+                gui.recognition_model = recognition_model
+                print("Buffalo model has been found and successfully loaded")
+            action.pop(0)
+
+        elif action[0][0] == "load_models":
             gui.populate_target_videos()
             gui.load_source_faces()
-            action.pop(0)    
+            action.pop(0)
 
-            
-        # From VM    
+            # From VM
         elif action[0][0] == "stop_play":
             gui.set_player_buttons_to_inactive()
-            action.pop(0)        
-        
+            action.pop(0)
+
         elif action[0][0] == "set_slider_length":
             gui.set_video_slider_length(action[0][1])
             action.pop(0)
-  
-        elif action[0][0] == "send_msg":    
+
+        elif action[0][0] == "send_msg":
             gui.set_status(action[0][1])
-            action.pop(0) 
-            
-        else:
-            print("Action not found: "+action[0][0]+" "+str(action[0][1]))
             action.pop(0)
 
-      # start = time.time()
-  
+        else:
+            print("Action not found: " + action[0][0] + " " + str(action[0][1]))
+            action.pop(0)
+
+    # start = time.time()
 
     if resize_delay > 5:
         gui.check_for_video_resize()
         resize_delay = 0
     else:
-        resize_delay +=1
-    
+        resize_delay += 1
+
     vm.process()
     gui.after(1, coordinator)
     # print(time.time() - start)    
 
+
 def load_cli():
-    print("Todo - starts on line 171 coordinator.py")
+    print("Todo - starts on line 185 coordinator.py")
     print("CLI mode will load models but processing won't start. Sorry! Still not implemented")
 
     global vm, action, frame, r_frame
@@ -191,11 +190,11 @@ def load_cli():
     action = []
     frame = []
     r_frame = []
-    
+
     if not vm.faceapp_model:
         faceapp_model = load_faceapp_model()
         vm.faceapp_model = faceapp_model
-    
+
     if not vm.swapper_model:
         swapper, emap = load_swapper_model()
         vm.set_swapper_model(swapper, emap)
@@ -221,11 +220,11 @@ def load_cli():
 
     file = rope.globals.source_video_path
 
-    vm.load_target_video( file )
+    vm.load_target_video(file)
 
     file = rope.globals.target_face_path
 
-    vm.load_target_image( file )
+    vm.load_target_image(file)
 
     if vm.get_action_length() > 0:
         action.append(vm.get_action())
@@ -237,11 +236,7 @@ def load_cli():
         r_frame.append(vm.get_requested_frame())
 
     if len(r_frame) > 0:
-        r_frame=[]
-
-    
-
-
+        r_frame = []
 
 
 def load_faceapp_model():
@@ -250,59 +245,83 @@ def load_faceapp_model():
     print("Locating and loading buffalo model...")
     return app
 
-def load_swapper_model():    
+
+def load_swapper_model():
     model = onnx.load("./models/inswapper_128.fp16.onnx")
-    
+
     graph = model.graph
     emap = onnx.numpy_helper.to_array(graph.initializer[-1])
 
     sess_options = onnxruntime.SessionOptions()
     sess_options.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL
     print("Locating and loading inswapper_128 model...")
-    
-    return onnxruntime.InferenceSession( "./models/inswapper_128.fp16.onnx", sess_options, providers = ['CUDAExecutionProvider']), emap
-    
+
+    return onnxruntime.InferenceSession("./models/inswapper_128.fp16.onnx", sess_options,
+                                        providers=['CUDAExecutionProvider', 'CPUExecutionProvider']), emap
+
+
 def load_clip_model():
     # https://github.com/timojl/clipseg
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")    
+    print(f"Using device: {device}")
     clip_session = CLIPDensePredT(version='ViT-B/16', reduce_dim=64, complex_trans_conv=True)
     # clip_session = CLIPDensePredTMasked(version='ViT-B/16', reduce_dim=64)
     clip_session.eval();
-    clip_session.load_state_dict(torch.load('./models/rd64-uni-refined.pth'), strict=False) 
+    clip_session.load_state_dict(torch.load('./models/rd64-uni-refined.pth'), strict=False)
     clip_session.to(device)
-    print("Locating and loading CLIP model...")    
-    return clip_session 
+    print("Locating and loading CLIP model...")
+    return clip_session
+
 
 def load_GFPGAN_model():
-    GFPGAN_session = onnxruntime.InferenceSession( "./models/GFPGANv1.4.onnx", providers=["CUDAExecutionProvider"])
-    print("Locating and loading GFPGAN model...")  
+    GFPGAN_session = onnxruntime.InferenceSession("./models/GFPGANv1.4.onnx",
+                                                  providers=["CUDAExecutionProvider", 'CPUExecutionProvider'])
+    print("Locating and loading GFPGAN model...")
     return GFPGAN_session
-    
-def load_codeformer_model():    
-    codeformer_session = onnxruntime.InferenceSession( "./models/codeformer_fp16.onnx", providers=["CUDAExecutionProvider"])
-    print("Locating and loading CodeFormer model...")  
+
+
+def load_codeformer_model():
+    codeformer_session = onnxruntime.InferenceSession("./models/codeformer_fp16.onnx",
+                                                      providers=["CUDAExecutionProvider", 'CPUExecutionProvider'])
+    print("Locating and loading CodeFormer model...")
     return codeformer_session
 
-def load_occluder_model():            
-    model = onnxruntime.InferenceSession("./models/occluder.onnx", providers=["CUDAExecutionProvider"])
-    print("Locating and loading occluder model...")  
-    return model 
 
-def load_face_parser_model():    
-    session = onnxruntime.InferenceSession("./models/faceparser_fp16.onnx", providers=["CUDAExecutionProvider"])
+def load_occluder_model():
+    model = onnxruntime.InferenceSession("./models/occluder.onnx",
+                                         providers=["CUDAExecutionProvider", 'CPUExecutionProvider'])
+    return model
+
+
+def load_face_parser_model():
+    session = onnxruntime.InferenceSession("./models/faceparser_fp16.onnx",
+                                           providers=["CUDAExecutionProvider", 'CPUExecutionProvider'])
 
     to_tensor = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
-    print("Locating and loading face parser model...")  
+    print("Locating and loading face parser model...")
     return session, to_tensor
 
 
-def load_resnet_model():     
-    model = onnxruntime.InferenceSession("./models/res50.onnx", providers=["CUDAExecutionProvider"])
+def load_resnet_model():
+    model = onnxruntime.InferenceSession("./models/res50.onnx",
+                                         providers=["CUDAExecutionProvider", 'CPUExecutionProvider'])
     return model
+
+
+def load_detection_model():
+    session = onnxruntime.InferenceSession('./models/det_10g.onnx',
+                                           providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+    return session
+
+
+def load_recognition_model():
+    session = onnxruntime.InferenceSession('./models/w600k_r50.onnx',
+                                           providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+    return session
+
 
 def run():
     global gui, vm, action, frame, r_frame, resize_delay
@@ -313,9 +332,7 @@ def run():
     frame = []
     r_frame = []
     print("Initializing GUI, please wait..")
-    gui.initialize_gui() 
-    coordinator()    
+    gui.initialize_gui()
+    coordinator()
     print("GUI initialized successfully")
     gui.mainloop()
-
-
