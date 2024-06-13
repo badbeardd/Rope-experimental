@@ -1,4 +1,4 @@
-### Project is closed
+### Project is closed, but Wiki for Linux users is still available
 
 Since Rope now changed its backend it seems like Linux-based systems are fully supported.
 But if for some unknown reasons you may need to test out old Rope versions on Linux, check out dev branch.
