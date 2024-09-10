@@ -10,6 +10,7 @@ from skimage import transform as trans
 import subprocess
 from math import floor, ceil
 import bisect
+from face_analysis import FaceAnalysis
 
 import onnxruntime
 
