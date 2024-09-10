@@ -41,7 +41,7 @@ class VideoManager():
     def __init__(self):
         # Model related
         self.swapper_model = []  # insightface swapper model
-        # self.faceapp_model = []             # insight faceapp model
+        self.faceapp_model = []             # insight faceapp model
         self.input_names = []  # names of the inswapper.onnx inputs
         self.input_size = []  # size of the inswapper.onnx inputs
         self.emap = []  # comes from loading the inswapper model. not sure of data
