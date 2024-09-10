@@ -121,5 +121,5 @@ def process():
 def run():
     parse_console_input()
 
-if __name__ == "main":
+if __name__ == "__main__":
     run()
